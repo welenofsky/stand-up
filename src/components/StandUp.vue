@@ -14,7 +14,7 @@
     <button @click.prevent="stopTimer">Stop Timer</button>
   </template>
 
-  <p class="timer">Current Time: {{ timeString }}</p>
+  <p class="timer" v-show="timeString.length > 0">Current Time: {{ timeString }}</p>
 
 </template>
 
