@@ -20,24 +20,20 @@
 
 <script setup>
   import { ref, onUnmounted, onMounted } from 'vue';
-  import {
-    isNotificationsSupported,
-    notificationPermissionGranted,
-    requestNotificationPermission
-  } from '../notification.js'
+  import { isNotificationsSupported, notificationPermissionGranted } from '../notification.js';
+  import { getTimeString, leftPad } from '../util.js';
+
   const status = ref('paused');
   const toggleStatus = () => {
     status.value = status.value === 'paused' ? 'started' : 'paused';
   }
 
   const nextStand = ref(0);
-  const notificationsEnabled = ref(false);
   const startTimer = () => {
     if (isNotificationsSupported() && !notificationPermissionGranted()) {
-      requestNotificationPermission()
+      Notification.requestPermission()
         .then((perm) =>{
-          notificationsEnabled.value = perm === 'granted';
-          if (!notificationsEnabled.value) {
+          if (!notificationPermissionGranted()) {
             alert('Notifications Blocked! We will have to use a standard JS alert without notifications.');
           }
         })
@@ -49,41 +45,26 @@
   }
 
   const stopTimer = () => {
-    nextStand.value = null;
+    nextStand.value = 0;
     status.value = 'paused';
   }
 
   const interval = ref(null);
   const timeString = ref('');
-  const leftPad = (str, size, padStr = ' ') => {
-    if (typeof str !== 'string') {
-      str = str.toString();
-    }
-    if (typeof padStr !== 'string') {
-      padStr = padStr.toString();
-    }
-    const diff = size - str.length;
-    if (diff && padStr.length > 0) {
-      return `${padStr.repeat(Math.max(0, Math.ceil(diff / padStr.length)))}${str}`
-    }
-    return str;
-  }
-  const getTimeString = (date) => `${date.getHours()}:${leftPad(date.getMinutes(), 2, 0)}:${leftPad(date.getSeconds(), 2, 0)}`;
+  const notificationText = 'Stand Up!';
   onMounted(() => {
     interval.value = setInterval(() => {
       timeString.value = getTimeString(new Date());
       if (nextStand.value && (getTimeString(nextStand.value) === timeString.value)) {
-        const notificationText = 'Stand Up!';
         if (notificationsEnabled.value) {
-          new Notification(notificationsEnabled);
+          new Notification(notificationText);
         } else {
-          alert(notificationsEnabled);
+          alert(notificationText);
         }
-        status.value = 'paused';
-        nextStand.value = 0;
+        stopTimer();
       }
     }, 1000)
-  })
+  });
   onUnmounted(() => {
     if (typeof interval.value === 'function') {
       clearInterval(interval.value);
