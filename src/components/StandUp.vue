@@ -54,14 +54,18 @@
   const notificationTitle = 'Stand Up!';
   const notificationText = "It's been 30 minutes. Time to stand up and stretch.";
   const interval = ref(null);
+  const notificationSound = new Audio(`${import.meta.env.BASE_URL}airplane-ding.mp3`);
+
   onMounted(() => {
     interval.value = setInterval(() => {
       timeString.value = getTimeString(new Date());
       if (nextStand.value && (getTimeString(nextStand.value) === timeString.value)) {
-        if (notificationsEnabled.value) {
+        notificationSound.play();
+        if (notificationPermissionGranted()) {
           new Notification(notificationTitle, {
             body: notificationText,
-            icon: `${import.meta.env.BASE_URL}working-on-office-128.png`
+            icon: `${import.meta.env.BASE_URL}working-on-office-128.png`,
+            requireInteraction: true
           });
         } else {
           alert(notificationText);
