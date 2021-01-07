@@ -47,12 +47,13 @@
   const stopTimer = () => {
     nextStand.value = 0;
     status.value = 'paused';
-  }
-
-  const interval = ref(null);
+  };
+  
   const timeString = ref('');
+  timeString.value = getTimeString(new Date());
   const notificationTitle = 'Stand Up!';
-  const notificationText = "It's been 30 minutes. Time to stand up and stretch."
+  const notificationText = "It's been 30 minutes. Time to stand up and stretch.";
+  const interval = ref(null);
   onMounted(() => {
     interval.value = setInterval(() => {
       timeString.value = getTimeString(new Date());
@@ -67,7 +68,7 @@
         }
         stopTimer();
       }
-    }, 1000)
+    }, 1000);
   });
   onUnmounted(() => {
     if (typeof interval.value === 'function') {
