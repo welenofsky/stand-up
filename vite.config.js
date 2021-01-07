@@ -6,6 +6,6 @@ import vue from '@vitejs/plugin-vue'
 export default {
   plugins: [vue()],
   build: {
-    base: process.env.NODE_ENV === 'production' ? '/stand-up/' : '/'
+    base: '/stand-up/'
   }
 }
