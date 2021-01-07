@@ -51,13 +51,17 @@
 
   const interval = ref(null);
   const timeString = ref('');
-  const notificationText = 'Stand Up!';
+  const notificationTitle = 'Stand Up!';
+  const notificationText = "It's been 30 minutes. Time to stand up and stretch."
   onMounted(() => {
     interval.value = setInterval(() => {
       timeString.value = getTimeString(new Date());
       if (nextStand.value && (getTimeString(nextStand.value) === timeString.value)) {
         if (notificationsEnabled.value) {
-          new Notification(notificationText);
+          new Notification(notificationTitle, {
+            body: notificationText,
+            icon: `${import.meta.env.BASE_URL}working-on-office-128.png`
+          });
         } else {
           alert(notificationText);
         }
